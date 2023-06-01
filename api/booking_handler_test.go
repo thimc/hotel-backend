@@ -3,8 +3,8 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"hotel/db/fixtures"
-	"hotel/types"
+	"github.com/thimc/hotel-backend/db/fixtures"
+	"github.com/thimc/hotel-backend/types"
 	"net/http"
 	"net/http/httptest"
 	"testing"

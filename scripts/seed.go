@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"hotel/api"
-	"hotel/db"
-	"hotel/db/fixtures"
+	"github.com/thimc/hotel-backend/api"
+	"github.com/thimc/hotel-backend/db"
+	"github.com/thimc/hotel-backend/db/fixtures"
 	"log"
 	"time"
 

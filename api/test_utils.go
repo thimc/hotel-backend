@@ -2,9 +2,10 @@ package api
 
 import (
 	"context"
-	"hotel/db"
 	"log"
 	"testing"
+
+	"github.com/thimc/hotel-backend/db"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

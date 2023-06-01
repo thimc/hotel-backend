@@ -3,7 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"hotel/types"
+	"github.com/thimc/hotel-backend/types"
 	"net/http/httptest"
 	"testing"
 

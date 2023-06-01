@@ -1,8 +1,8 @@
 package api
 
 import (
-	"hotel/api/errors"
-	"hotel/db"
+	"github.com/thimc/hotel-backend/api/errors"
+	"github.com/thimc/hotel-backend/db"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"

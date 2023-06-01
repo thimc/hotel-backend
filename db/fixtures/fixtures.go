@@ -3,8 +3,8 @@ package fixtures
 import (
 	"context"
 	"fmt"
-	"hotel/db"
-	"hotel/types"
+	"github.com/thimc/hotel-backend/db"
+	"github.com/thimc/hotel-backend/types"
 	"log"
 	"time"
 )

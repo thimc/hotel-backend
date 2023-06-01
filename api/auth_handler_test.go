@@ -3,7 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"hotel/db/fixtures"
+	"github.com/thimc/hotel-backend/db/fixtures"
 	"net/http"
 	"net/http/httptest"
 	"testing"

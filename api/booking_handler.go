@@ -1,8 +1,8 @@
 package api
 
 import (
-	"hotel/db"
-	"hotel/types"
+	"github.com/thimc/hotel-backend/db"
+	"github.com/thimc/hotel-backend/types"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"

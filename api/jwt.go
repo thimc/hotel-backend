@@ -2,8 +2,8 @@ package api
 
 import (
 	"fmt"
-	"hotel/api/errors"
-	"hotel/db"
+	"github.com/thimc/hotel-backend/api/errors"
+	"github.com/thimc/hotel-backend/db"
 	"net/http"
 	"os"
 	"time"

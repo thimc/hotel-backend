@@ -2,9 +2,9 @@ package api
 
 import (
 	"fmt"
-	"hotel/api/errors"
-	"hotel/db"
-	"hotel/types"
+	"github.com/thimc/hotel-backend/api/errors"
+	"github.com/thimc/hotel-backend/db"
+	"github.com/thimc/hotel-backend/types"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"

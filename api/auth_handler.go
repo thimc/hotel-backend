@@ -3,8 +3,8 @@ package api
 import (
 	"errors"
 	"fmt"
-	"hotel/db"
-	"hotel/types"
+	"github.com/thimc/hotel-backend/db"
+	"github.com/thimc/hotel-backend/types"
 	"net/http"
 	"os"
 	"time"

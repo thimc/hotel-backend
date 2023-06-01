@@ -4,9 +4,9 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"hotel/api"
-	"hotel/api/errors"
-	"hotel/db"
+	"github.com/thimc/hotel-backend/api"
+	"github.com/thimc/hotel-backend/api/errors"
+	"github.com/thimc/hotel-backend/db"
 	"log"
 	"net/http"
 
