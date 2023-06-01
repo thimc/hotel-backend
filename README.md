@@ -1,9 +1,13 @@
 # Hotel backend
 
-This repo contains a demo hotel backend written in go and is powered by fiber
-and uses MongoDB as its database. Authentication is done via JWT.
+This repo contains a demo hotel backend written in go and is powered by [fiber](https://gofiber.io/)
+and uses [MongoDB](https://www.mongodb.com/) as its database. Authentication is done via JWT.
 
-All URL routes are prefixed with *http://localhost:3000/v1/*
+The backend is designed with portability in mind, should the user ever need to
+switch to another type of database such as PostgreSQL, SQLite, MariaDB or MySQL
+(it could be literally any way of storing actually) all that would be needed
+for the switch is to implement the functions needed for the interfaces in the
+`db` folder.
 
 NOTE: The backend is still missing a few routes and error handling needs to be tidied
 up a bit before this project is considering feature complete.

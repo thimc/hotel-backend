@@ -1,5 +1,7 @@
 # API Documentation
 
+All URL routes are prefixed with *http://localhost:3000/v1/*
+
 ## /auth
 * Request type: POST
 * Requires admin access: No
