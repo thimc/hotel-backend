@@ -7,11 +7,9 @@ import (
 	"hotel/types"
 	"log"
 	"time"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func AddBooking(store *db.Store, userID, roomID primitive.ObjectID, from, until time.Time) *types.Booking {
+func AddBooking(store *db.Store, userID, roomID string, from, until time.Time) *types.Booking {
 	booking := &types.Booking{
 		UserID:    userID,
 		RoomID:    roomID,
@@ -25,7 +23,7 @@ func AddBooking(store *db.Store, userID, roomID primitive.ObjectID, from, until 
 	return insertedBooking
 }
 
-func AddRoom(store *db.Store, size string, price float64, hotelID primitive.ObjectID) *types.Room {
+func AddRoom(store *db.Store, size string, price float64, hotelID string) *types.Room {
 	room := &types.Room{
 		Size:    size,
 		Price:   price,
@@ -38,10 +36,10 @@ func AddRoom(store *db.Store, size string, price float64, hotelID primitive.Obje
 	return insertedRoom
 }
 
-func AddHotel(store *db.Store, name, location string, rating int, rooms []primitive.ObjectID) *types.Hotel {
+func AddHotel(store *db.Store, name, location string, rating int, rooms []map[string]any) *types.Hotel {
 	roomIDs := rooms
 	if roomIDs == nil {
-		roomIDs = []primitive.ObjectID{}
+		roomIDs = []map[string]any{}
 	}
 	hotel := types.Hotel{
 		Name:     name,

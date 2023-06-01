@@ -5,7 +5,6 @@ import (
 	"regexp"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -65,12 +64,12 @@ func isEmailValid(e string) bool {
 }
 
 type User struct {
-	ID                primitive.ObjectID `bson:"_id,omitempty"    json:"id,omitempty"`
-	FirstName         string             `bson:"firstName"        json:"firstName"`
-	LastName          string             `bson:"lastName"         json:"lastName"`
-	Email             string             `bson:"email"            json:"email"`
-	EncryptedPassword string             `bson:"encyptedPassword" json:"-"`
-	IsAdmin           bool               `bson:"isAdmin"          json:"isAdmin"`
+	ID                string `bson:"_id,omitempty"    json:"id,omitempty"`
+	FirstName         string `bson:"firstName"        json:"firstName"`
+	LastName          string `bson:"lastName"         json:"lastName"`
+	Email             string `bson:"email"            json:"email"`
+	EncryptedPassword string `bson:"encyptedPassword" json:"-"`
+	IsAdmin           bool   `bson:"isAdmin"          json:"isAdmin"`
 }
 
 func NewUserFromParams(p CreateUserParams) (*User, error) {

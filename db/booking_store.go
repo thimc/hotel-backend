@@ -37,7 +37,7 @@ func (s *MongoBookingStore) InsertBooking(ctx context.Context, booking *types.Bo
 		return nil, err
 	}
 
-	booking.ID = resp.InsertedID.(primitive.ObjectID)
+	booking.ID = resp.InsertedID.(primitive.ObjectID).Hex()
 	return booking, nil
 }
 

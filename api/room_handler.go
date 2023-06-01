@@ -104,7 +104,7 @@ func (h *RoomHandler) HandleBookRoom(c *fiber.Ctx) error {
 
 	booking := types.Booking{
 		UserID:     user.ID,
-		RoomID:     roomOID,
+		RoomID:     roomOID.Hex(),
 		FromDate:   params.FromDate,
 		UntilDate:  params.UntilDate,
 		NumPersons: params.NumPersons,

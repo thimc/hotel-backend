@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"hotel/api/errors"
 	"hotel/types"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -11,9 +12,9 @@ import (
 
 type HotelStore interface {
 	Insert(context.Context, *types.Hotel) (*types.Hotel, error)
-	Update(context.Context, bson.M, bson.M) error
-	GetHotels(context.Context, bson.M) ([]*types.Hotel, error)
-	GetHotel(context.Context, primitive.ObjectID) (*types.Hotel, error)
+	Update(context.Context, map[string]any, map[string]any) error
+	GetHotels(context.Context, map[string]any) ([]*types.Hotel, error)
+	GetHotel(context.Context, string) (*types.Hotel, error)
 }
 
 type MongoHotelStore struct {
@@ -34,16 +35,16 @@ func (s *MongoHotelStore) Insert(ctx context.Context, hotel *types.Hotel) (*type
 		return nil, err
 	}
 
-	hotel.ID = resp.InsertedID.(primitive.ObjectID)
+	hotel.ID = resp.InsertedID.(primitive.ObjectID).Hex()
 	return hotel, nil
 }
 
-func (s *MongoHotelStore) Update(ctx context.Context, filter bson.M, update bson.M) error {
+func (s *MongoHotelStore) Update(ctx context.Context, filter, update map[string]any) error {
 	_, err := s.coll.UpdateOne(ctx, filter, update)
 	return err
 }
 
-func (s *MongoHotelStore) GetHotels(ctx context.Context, filter bson.M) ([]*types.Hotel, error) {
+func (s *MongoHotelStore) GetHotels(ctx context.Context, filter map[string]any) ([]*types.Hotel, error) {
 	resp, err := s.coll.Find(ctx, filter)
 	if err != nil {
 		return nil, err
@@ -57,9 +58,13 @@ func (s *MongoHotelStore) GetHotels(ctx context.Context, filter bson.M) ([]*type
 	return hotels, nil
 }
 
-func (s *MongoHotelStore) GetHotel(ctx context.Context, id primitive.ObjectID) (*types.Hotel, error) {
+func (s *MongoHotelStore) GetHotel(ctx context.Context, id string) (*types.Hotel, error) {
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, errors.ErrorInvalidID()
+	}
 	var hotel types.Hotel
-	if err := s.coll.FindOne(ctx, bson.M{"_id": id}).Decode(&hotel); err != nil {
+	if err := s.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&hotel); err != nil {
 		return nil, err
 	}
 	return &hotel, nil

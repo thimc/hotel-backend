@@ -96,7 +96,7 @@ func TestUserGetBooking(t *testing.T) {
 	bookingHandler := NewBookingHandler(&tdb.Store)
 	route.Get("/:id", bookingHandler.HandleGetBooking)
 
-	req := httptest.NewRequest("GET", fmt.Sprintf("/%s", booking.ID.Hex()), nil)
+	req := httptest.NewRequest("GET", fmt.Sprintf("/%s", booking.ID), nil)
 	req.Header.Add(TokenHeader, CreateTokenFromUser(user))
 	resp, err := app.Test(req)
 	if err != nil {

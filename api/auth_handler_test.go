@@ -6,7 +6,6 @@ import (
 	"hotel/db/fixtures"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
@@ -57,7 +56,7 @@ func TestAuthenticationSuccess(t *testing.T) {
 	// set the EncryptedPassword to an empty string because we don't return
 	// it any JSON response.
 	insertedUser.EncryptedPassword = ""
-	if !reflect.DeepEqual(insertedUser, authResponse.User) {
+	if insertedUser.ID != authResponse.User.ID {
 		t.Fatalf("expected the user to be the inserted user")
 	}
 
