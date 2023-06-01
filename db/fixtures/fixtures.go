@@ -27,8 +27,9 @@ func AddBooking(store *db.Store, userID, roomID primitive.ObjectID, from, until 
 
 func AddRoom(store *db.Store, size string, price float64, hotelID primitive.ObjectID) *types.Room {
 	room := &types.Room{
-		Size:  size,
-		Price: price,
+		Size:    size,
+		Price:   price,
+		HotelID: hotelID,
 	}
 	insertedRoom, err := store.Room.InsertRoom(context.Background(), room)
 	if err != nil {
