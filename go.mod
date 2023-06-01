@@ -1,4 +1,4 @@
-module hotel
+module github.com/thimc/hotel-backend
 
 go 1.20
 
