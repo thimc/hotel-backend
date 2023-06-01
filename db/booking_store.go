@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+
 	"github.com/thimc/hotel-backend/types"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,9 +13,9 @@ import (
 
 type BookingStore interface {
 	InsertBooking(context.Context, *types.Booking) (*types.Booking, error)
-	GetBookings(context.Context, bson.M) ([]*types.Booking, error)
+	GetBookings(context.Context, map[string]any) ([]*types.Booking, error)
 	GetBookingByID(context.Context, string) (*types.Booking, error)
-	UpdateBooking(context.Context, string, bson.M) error
+	UpdateBooking(context.Context, string, map[string]any) error
 }
 
 type MongoBookingStore struct {
@@ -41,7 +42,7 @@ func (s *MongoBookingStore) InsertBooking(ctx context.Context, booking *types.Bo
 	return booking, nil
 }
 
-func (s *MongoBookingStore) GetBookings(ctx context.Context, filter bson.M) ([]*types.Booking, error) {
+func (s *MongoBookingStore) GetBookings(ctx context.Context, filter map[string]any) ([]*types.Booking, error) {
 	curr, err := s.coll.Find(ctx, filter)
 	if err != nil {
 		return nil, err
@@ -66,7 +67,7 @@ func (s *MongoBookingStore) GetBookingByID(ctx context.Context, id string) (*typ
 	return &booking, nil
 }
 
-func (s *MongoBookingStore) UpdateBooking(ctx context.Context, id string, update bson.M) error {
+func (s *MongoBookingStore) UpdateBooking(ctx context.Context, id string, update map[string]any) error {
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return err
