@@ -3,9 +3,10 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/thimc/hotel-backend/types"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/thimc/hotel-backend/types"
 
 	"github.com/gofiber/fiber/v2"
 )

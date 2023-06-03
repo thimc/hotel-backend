@@ -3,10 +3,11 @@ package fixtures
 import (
 	"context"
 	"fmt"
-	"github.com/thimc/hotel-backend/db"
-	"github.com/thimc/hotel-backend/types"
 	"log"
 	"time"
+
+	"github.com/thimc/hotel-backend/db"
+	"github.com/thimc/hotel-backend/types"
 )
 
 func AddBooking(store *db.Store, userID, roomID string, from, until time.Time) *types.Booking {

@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+
 	"github.com/thimc/hotel-backend/types"
 
 	"github.com/gofiber/fiber/v2"

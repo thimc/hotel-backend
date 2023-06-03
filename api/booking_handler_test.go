@@ -3,12 +3,13 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/thimc/hotel-backend/db/fixtures"
-	"github.com/thimc/hotel-backend/types"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/thimc/hotel-backend/db/fixtures"
+	"github.com/thimc/hotel-backend/types"
 
 	"github.com/gofiber/fiber/v2"
 )

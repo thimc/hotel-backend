@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+
 	"github.com/thimc/hotel-backend/types"
 
 	"go.mongodb.org/mongo-driver/bson"

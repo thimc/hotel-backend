@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/thimc/hotel-backend/api"
 	"github.com/thimc/hotel-backend/db"
 	"github.com/thimc/hotel-backend/db/fixtures"
-	"log"
-	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

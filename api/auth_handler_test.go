@@ -3,10 +3,11 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/thimc/hotel-backend/db/fixtures"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/thimc/hotel-backend/db/fixtures"
 
 	"github.com/gofiber/fiber/v2"
 )

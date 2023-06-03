@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+
 	"github.com/thimc/hotel-backend/api/errors"
 	"github.com/thimc/hotel-backend/types"
 

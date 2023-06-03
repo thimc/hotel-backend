@@ -1,9 +1,10 @@
 package api
 
 import (
+	"net/http"
+
 	"github.com/thimc/hotel-backend/db"
 	"github.com/thimc/hotel-backend/types"
-	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"

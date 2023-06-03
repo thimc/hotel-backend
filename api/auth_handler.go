@@ -3,11 +3,12 @@ package api
 import (
 	"errors"
 	"fmt"
-	"github.com/thimc/hotel-backend/db"
-	"github.com/thimc/hotel-backend/types"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/thimc/hotel-backend/db"
+	"github.com/thimc/hotel-backend/types"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
