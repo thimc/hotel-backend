@@ -86,12 +86,11 @@ The following fields are returned:
 
 This route will return one specific hotel in the same way as the previous route.
 
-Database pagination is enabled for this route.
+Database pagination is enabled for this route and is required.
 
 `..../v1/hotel?page=1&limit=5&rating=3`
 
-The result will be a list of 5 hotels starting from index 1 with a star rating
-of at least 3 or more.
+The result will be a list of 5 hotels starting from index 1 with a 3 star rating.
 
 ### /hotel/*id*/rooms
 * Request type: GET

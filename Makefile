@@ -9,3 +9,7 @@ test:
 
 seed:
 	@go run scripts/seed.go
+
+docker:
+	@docker build -t api .
+	@docker run -p 3000:3000 api

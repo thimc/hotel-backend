@@ -2,7 +2,7 @@ package db
 
 import (
 	"context"
-	"fmt"
+	"os"
 
 	"github.com/thimc/hotel-backend/types"
 
@@ -11,13 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type Dropper interface {
-	Drop(context.Context) error
-}
-
 type UserStore interface {
-	Dropper
-
 	GetUserByID(context.Context, string) (*types.User, error)
 	GetUserByEmail(context.Context, string) (*types.User, error)
 	GetUsers(context.Context) ([]*types.User, error)
@@ -32,9 +26,10 @@ type MongoUserStore struct {
 }
 
 func NewMongoUserStore(client *mongo.Client) *MongoUserStore {
+	dbName := os.Getenv(ENV_DB_NAME)
 	return &MongoUserStore{
 		client: client,
-		coll:   client.Database(DBNAME).Collection("users"),
+		coll:   client.Database(dbName).Collection("users"),
 	}
 }
 
@@ -105,9 +100,4 @@ func (s *MongoUserStore) UpdateUser(ctx context.Context, filter map[string]any, 
 		return err
 	}
 	return nil
-}
-
-func (s *MongoUserStore) Drop(ctx context.Context) error {
-	fmt.Println("--- dropping user collection")
-	return s.coll.Drop(ctx)
 }

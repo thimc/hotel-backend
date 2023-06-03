@@ -12,7 +12,6 @@ import (
 )
 
 func TestPostUser(t *testing.T) {
-	// spin up a temporary database
 	tdb := setup(t)
 	defer tdb.teardown(t)
 

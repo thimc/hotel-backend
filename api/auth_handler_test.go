@@ -59,7 +59,13 @@ func TestAuthenticationSuccess(t *testing.T) {
 	// it any JSON response.
 	insertedUser.EncryptedPassword = ""
 	if insertedUser.ID != authResponse.User.ID {
-		t.Fatalf("expected the user to be the inserted user")
+		t.Fatalf("expected the user ID %s to be the inserted user ID %s", authResponse.User.ID, insertedUser.ID)
+	}
+	if insertedUser.FirstName != authResponse.User.FirstName {
+		t.Fatalf("expected the user first name %s to be the inserted user first name %s", authResponse.User.FirstName, insertedUser.FirstName)
+	}
+	if insertedUser.LastName != authResponse.User.LastName {
+		t.Fatalf("expected the user last name %s to be the inserted user last name %s", authResponse.User.LastName, insertedUser.LastName)
 	}
 }
 
@@ -96,16 +102,16 @@ func TestAuthenticationWithWrongPasswordFailure(t *testing.T) {
 		t.Fatalf("expected http status %d, got %d", http.StatusUnauthorized, resp.StatusCode)
 	}
 
-	var genericResp Response
-	if err := json.NewDecoder(resp.Body).Decode(&genericResp); err != nil {
+	var response Response
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		t.Fatal(err)
 	}
 
-	if genericResp.Success {
-		t.Fatalf("expected success false but got %v", genericResp.Success)
+	if response.Success {
+		t.Fatalf("expected success false but got %v", response.Success)
 	}
 
-	if genericResp.Message != responses.ErrorUnauthorized().Message {
-		t.Fatalf("expected response  %s but got %s", responses.ErrorUnauthorized().Message, genericResp.Message)
+	if response.Message != responses.ErrorUnauthorized().Message {
+		t.Fatalf("expected response  %s but got %s", responses.ErrorUnauthorized().Message, response.Message)
 	}
 }

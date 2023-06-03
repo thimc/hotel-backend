@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/thimc/hotel-backend/api"
 	"github.com/thimc/hotel-backend/db"
 	"github.com/thimc/hotel-backend/db/fixtures"
@@ -16,12 +18,20 @@ import (
 )
 
 func main() {
-	ctx := context.Background()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(db.DBURI))
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
+	var (
+		ctx         = context.Background()
+		mongoUri    = os.Getenv(db.ENV_DB_URI)
+		mongoDbName = os.Getenv(db.ENV_DB_NAME)
+	)
+
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoUri))
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err = client.Database(db.DBNAME).Drop(ctx); err != nil {
+	if err = client.Database(mongoDbName).Drop(ctx); err != nil {
 		log.Fatal(err)
 	}
 

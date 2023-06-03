@@ -1,12 +1,5 @@
 package db
 
-const (
-	DBURI  = "mongodb://10.0.2.3:27017"
-	DBNAME = "hotel-reservation"
-
-	TestDBNAME = "hotel-reservation-test"
-)
-
 type Pagination struct {
 	Limit int64
 	Page  int64
@@ -18,3 +11,13 @@ type Store struct {
 	Room    RoomStore
 	Booking BookingStore
 }
+
+const (
+	ENV_DB_NAME = "MONGODB_DB_NAME"
+	ENV_DB_URI  = "MONGODB_DB_URI"
+
+	ENV_TEST_DB_URI = "MONGODB_TEST_DB_URI"
+
+	ENV_LISTEN_ADDRESS = "HTTP_LISTEN_ADDRESS"
+	ENV_JWT_SECRET     = "JWT_SECRET"
+)

@@ -2,10 +2,11 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/thimc/hotel-backend/api"
 	"github.com/thimc/hotel-backend/db"
 
@@ -14,11 +15,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func main() {
-	listenAddr := flag.String("listenAddr", ":3000", "listen port of the api server")
-	flag.Parse()
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
+}
 
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(db.DBURI))
+func main() {
+	dbUri := os.Getenv(db.ENV_DB_URI)
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(dbUri))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,7 +81,8 @@ func main() {
 	// admin handlers
 	admin.Get("/booking", bookingHandler.HandleGetBookings)
 
-	if err := app.Listen(*listenAddr); err != nil {
+	listenAddr := os.Getenv(db.ENV_LISTEN_ADDRESS)
+	if err := app.Listen(listenAddr); err != nil {
 		log.Fatal(err)
 	}
 }
