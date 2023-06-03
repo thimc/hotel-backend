@@ -1,12 +1,10 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/thimc/hotel-backend/api/errors"
 	"github.com/thimc/hotel-backend/db"
 
 	"github.com/gofiber/fiber/v2"
@@ -28,23 +26,23 @@ func JWTAuthentication(userStore db.UserStore) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		token, ok := c.GetReqHeaders()[TokenHeader]
 		if !ok {
-			return errors.ErrorUnauthorized()
+			return ErrorUnauthorized()
 		}
 
 		claims, err := validateToken(token)
 		if err != nil {
-			return err
+			return NewError(http.StatusUnauthorized, "Invalid token")
 		}
 
 		expires := int64(claims["expires"].(float64))
 		if time.Now().Unix() > expires {
-			return errors.NewError(http.StatusBadRequest, "token expired")
+			return ErrorTokenExpired()
 		}
 
 		userID := claims["id"].(string)
 		user, err := userStore.GetUserByID(c.Context(), userID)
 		if err != nil {
-			return errors.ErrorUnauthorized()
+			return ErrorUnauthorized()
 		}
 
 		c.Context().SetUserValue("user", user)
@@ -55,25 +53,22 @@ func JWTAuthentication(userStore db.UserStore) fiber.Handler {
 func validateToken(tokenString string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.ErrorUnauthorized()
+			return nil, ErrorUnauthorized()
 		}
 		secret := os.Getenv("JWT_SECRET")
 		return []byte(secret), nil
 	})
-
 	if err != nil {
-		fmt.Println("failed to parse JWT token:", err)
-		return nil, errors.ErrorUnauthorized()
+		return nil, ErrorUnauthorized()
 	}
 
 	if !token.Valid {
-		fmt.Println("invalid token")
-		return nil, errors.ErrorUnauthorized()
+		return nil, ErrorUnauthorized()
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return nil, errors.ErrorUnauthorized()
+		return nil, ErrorUnauthorized()
 	}
 
 	return claims, nil

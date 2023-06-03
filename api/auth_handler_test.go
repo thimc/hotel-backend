@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/thimc/hotel-backend/api/responses"
 	"github.com/thimc/hotel-backend/db/fixtures"
 
 	"github.com/gofiber/fiber/v2"
@@ -60,7 +61,6 @@ func TestAuthenticationSuccess(t *testing.T) {
 	if insertedUser.ID != authResponse.User.ID {
 		t.Fatalf("expected the user to be the inserted user")
 	}
-
 }
 
 func TestAuthenticationWithWrongPasswordFailure(t *testing.T) {
@@ -70,7 +70,7 @@ func TestAuthenticationWithWrongPasswordFailure(t *testing.T) {
 	fixtures.AddUser(&tdb.Store, "James", "Solo", false)
 
 	// start the fiber app
-	app := fiber.New()
+	app := fiber.New(fiber.Config{ErrorHandler: ErrorHandler})
 	authHandler := NewAuthHandler(tdb.User)
 	app.Post("/", authHandler.HandleAuthenticate)
 
@@ -96,7 +96,7 @@ func TestAuthenticationWithWrongPasswordFailure(t *testing.T) {
 		t.Fatalf("expected http status %d, got %d", http.StatusUnauthorized, resp.StatusCode)
 	}
 
-	var genericResp GenericResp
+	var genericResp Response
 	if err := json.NewDecoder(resp.Body).Decode(&genericResp); err != nil {
 		t.Fatal(err)
 	}
@@ -105,7 +105,7 @@ func TestAuthenticationWithWrongPasswordFailure(t *testing.T) {
 		t.Fatalf("expected success false but got %v", genericResp.Success)
 	}
 
-	if genericResp.Msg != "invalid credentials" {
-		t.Fatalf("expected response  %s but got %s", "invalid credentials", genericResp.Msg)
+	if genericResp.Message != responses.ErrorUnauthorized().Message {
+		t.Fatalf("expected response  %s but got %s", responses.ErrorUnauthorized().Message, genericResp.Message)
 	}
 }

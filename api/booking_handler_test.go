@@ -92,7 +92,7 @@ func TestUserGetBooking(t *testing.T) {
 	room := fixtures.AddRoom(&tdb.Store, "medium", 99.99, hotel.ID)
 	booking := fixtures.AddBooking(&tdb.Store, user.ID, room.ID, time.Now(), time.Now().AddDate(0, 0, 5))
 
-	app := fiber.New()
+	app := fiber.New(fiber.Config{ErrorHandler: ErrorHandler})
 	route := app.Group("/", JWTAuthentication(tdb.User))
 	bookingHandler := NewBookingHandler(&tdb.Store)
 	route.Get("/:id", bookingHandler.HandleGetBooking)

@@ -86,6 +86,13 @@ The following fields are returned:
 
 This route will return one specific hotel in the same way as the previous route.
 
+Database pagination is enabled for this route.
+
+`..../v1/hotel?page=1&limit=5&rating=3`
+
+The result will be a list of 5 hotels starting from index 1 with a star rating
+of at least 3 or more.
+
 ### /hotel/*id*/rooms
 * Request type: GET
 * Requires admin access: no
@@ -111,6 +118,20 @@ The following fields are returned:
 - size
 - price
 - hotel \_id
+
+## /room/*id*
+* Request type: GET
+* Requires admin access: no
+
+This route will return the room matching `id`.
+
+The following fields are returned:
+- \_id
+- seaside
+- size
+- price
+- hotel \_id
+
 
 ## /room/*id*/book
 * Request type: POST

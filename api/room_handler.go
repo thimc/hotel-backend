@@ -9,12 +9,9 @@ import (
 	"github.com/thimc/hotel-backend/types"
 
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 /*
-The BookRoomParams are mandatory parameters used when a customer wishes to reserve a room.
 The User ID and Room ID isn't specified here because the User ID is already in the Context
 */
 type BookRoomParams struct {
@@ -31,7 +28,7 @@ validate will:
 func (p BookRoomParams) validate() error {
 	now := time.Now()
 	if now.After(p.FromDate) || now.After(p.UntilDate) {
-		return fmt.Errorf("cannot book a room in the past")
+		return ErrorBadRequest()
 	}
 	if p.NumPersons < 1 {
 		return fmt.Errorf("")
@@ -53,11 +50,23 @@ func NewRoomHandler(store *db.Store) *RoomHandler {
 HandleGetRooms will return all the rooms with no filter
 */
 func (h *RoomHandler) HandleGetRooms(c *fiber.Ctx) error {
-	rooms, err := h.store.Room.GetRooms(c.Context(), bson.M{})
+	rooms, err := h.store.Room.GetRooms(c.Context(), map[string]any{})
 	if err != nil {
 		return err
 	}
 	return c.JSON(rooms)
+}
+
+/*
+HandleGetRoom will return th rooms that matches id
+*/
+func (h *RoomHandler) HandleGetRoom(c *fiber.Ctx) error {
+	id := c.Params("id")
+	room, err := h.store.Room.GetRoomByID(c.Context(), id)
+	if err != nil {
+		return ErrorNotFound("Room")
+	}
+	return c.JSON(room)
 }
 
 /*
@@ -72,40 +81,34 @@ HandleBookRoom will do the following:
 func (h *RoomHandler) HandleBookRoom(c *fiber.Ctx) error {
 	var params BookRoomParams
 	if err := c.BodyParser(&params); err != nil {
-		return err
+		return ErrorBadRequest()
 	}
 
 	if err := params.validate(); err != nil {
-		return err
+		return ErrorBadRequest()
 	}
 
-	roomOID, err := primitive.ObjectIDFromHex(c.Params("id"))
-	if err != nil {
-		return err
-	}
+	roomID := c.Params("id")
 
 	user, ok := c.Context().Value("user").(*types.User)
 	if !ok {
-		return c.Status(http.StatusInternalServerError).JSON(GenericResp{
+		return c.JSON(Response{
 			Success: false,
-			Msg:     "internal server error",
+			Message: "internal server error",
 		})
 	}
 
-	ok, err = h.isRoomAvailable(c, roomOID, params)
+	ok, err := h.isRoomAvailable(c, roomID, params)
 	if err != nil {
 		return err
 	}
 	if !ok {
-		return c.Status(http.StatusBadRequest).JSON(GenericResp{
-			Success: false,
-			Msg:     fmt.Sprintf("room %s is already booked", roomOID.Hex()),
-		})
+		return NewError(http.StatusBadRequest, fmt.Sprintf("room %s is already booked", roomID))
 	}
 
 	booking := types.Booking{
 		UserID:     user.ID,
-		RoomID:     roomOID.Hex(),
+		RoomID:     roomID,
 		FromDate:   params.FromDate,
 		UntilDate:  params.UntilDate,
 		NumPersons: params.NumPersons,
@@ -120,13 +123,13 @@ func (h *RoomHandler) HandleBookRoom(c *fiber.Ctx) error {
 }
 
 /* isRoomAvailable will validate that the room is available */
-func (h *RoomHandler) isRoomAvailable(c *fiber.Ctx, roomID primitive.ObjectID, params BookRoomParams) (bool, error) {
-	filter := bson.M{
+func (h *RoomHandler) isRoomAvailable(c *fiber.Ctx, roomID string, params BookRoomParams) (bool, error) {
+	filter := map[string]any{
 		"roomID": roomID,
-		"fromDate": bson.M{
+		"fromDate": map[string]any{
 			"$gte": params.FromDate,
 		},
-		"untilDate": bson.M{
+		"untilDate": map[string]any{
 			"$lte": params.UntilDate,
 		},
 	}

@@ -2,19 +2,19 @@ package db
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/thimc/hotel-backend/api/errors"
 	"github.com/thimc/hotel-backend/types"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type HotelStore interface {
 	Insert(context.Context, *types.Hotel) (*types.Hotel, error)
 	Update(context.Context, map[string]any, map[string]any) error
-	GetHotels(context.Context, map[string]any) ([]*types.Hotel, error)
+	GetHotels(context.Context, map[string]any, *Pagination) ([]*types.Hotel, error)
 	GetHotel(context.Context, string) (*types.Hotel, error)
 }
 
@@ -45,14 +45,19 @@ func (s *MongoHotelStore) Update(ctx context.Context, filter, update map[string]
 	return err
 }
 
-func (s *MongoHotelStore) GetHotels(ctx context.Context, filter map[string]any) ([]*types.Hotel, error) {
-	resp, err := s.coll.Find(ctx, filter)
+func (s *MongoHotelStore) GetHotels(ctx context.Context, filter map[string]any, page *Pagination) ([]*types.Hotel, error) {
+	opts := options.FindOptions{}
+	opts.SetSkip((page.Page - 1) * page.Limit)
+	opts.SetLimit(page.Limit)
+
+	resp, err := s.coll.Find(ctx, filter, &opts)
 	if err != nil {
 		return nil, err
 	}
 
 	var hotels []*types.Hotel
 	if err := resp.All(ctx, &hotels); err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 
@@ -62,7 +67,7 @@ func (s *MongoHotelStore) GetHotels(ctx context.Context, filter map[string]any) 
 func (s *MongoHotelStore) GetHotel(ctx context.Context, id string) (*types.Hotel, error) {
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return nil, errors.ErrorInvalidID()
+		return nil, err
 	}
 	var hotel types.Hotel
 	if err := s.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&hotel); err != nil {

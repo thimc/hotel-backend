@@ -8,6 +8,7 @@ import (
 
 	"github.com/thimc/hotel-backend/db"
 	"github.com/thimc/hotel-backend/types"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func AddBooking(store *db.Store, userID, roomID string, from, until time.Time) *types.Booking {
@@ -37,10 +38,10 @@ func AddRoom(store *db.Store, size string, price float64, hotelID string) *types
 	return insertedRoom
 }
 
-func AddHotel(store *db.Store, name, location string, rating int, rooms []map[string]any) *types.Hotel {
+func AddHotel(store *db.Store, name, location string, rating int, rooms []primitive.ObjectID) *types.Hotel {
 	roomIDs := rooms
-	if roomIDs == nil {
-		roomIDs = []map[string]any{}
+	if rooms == nil {
+		roomIDs = []primitive.ObjectID{}
 	}
 	hotel := types.Hotel{
 		Name:     name,

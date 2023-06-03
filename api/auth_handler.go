@@ -3,7 +3,6 @@ package api
 import (
 	"errors"
 	"fmt"
-	"net/http"
 	"os"
 	"time"
 
@@ -36,20 +35,6 @@ type AuthResponse struct {
 	Token string      `json:"token"`
 }
 
-/* GenericResp is used when any type of error occurs in all of the handlers and middleware */
-type GenericResp struct {
-	Success bool   `json:"success"`
-	Msg     string `json:"msg"`
-}
-
-/* Wrapper function for when the credentials are invalid */
-func invalidCredentials(c *fiber.Ctx) error {
-	return c.Status(http.StatusUnauthorized).JSON(GenericResp{
-		Success: false,
-		Msg:     "invalid credentials",
-	})
-}
-
 /*
 HandleAuthenticate will do the following:
 - Parse the body and expect it to be a JSON formated AuthParams
@@ -60,19 +45,19 @@ HandleAuthenticate will do the following:
 func (h *AuthHandler) HandleAuthenticate(c *fiber.Ctx) error {
 	var params AuthParams
 	if err := c.BodyParser(&params); err != nil {
-		return err
+		return ErrorBadRequest()
 	}
 
 	user, err := h.userStore.GetUserByEmail(c.Context(), params.Email)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return invalidCredentials(c)
+			return ErrorUnauthorized()
 		}
-		return err
+		return ErrorNotFound("User")
 	}
 
 	if !types.IsValidPassword(user.EncryptedPassword, params.Password) {
-		return invalidCredentials(c)
+		return ErrorUnauthorized()
 	}
 
 	resp := AuthResponse{

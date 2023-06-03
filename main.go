@@ -4,26 +4,15 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"net/http"
+	"log"
 
 	"github.com/thimc/hotel-backend/api"
-	"github.com/thimc/hotel-backend/api/errors"
 	"github.com/thimc/hotel-backend/db"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-var config = fiber.Config{
-	ErrorHandler: func(c *fiber.Ctx, err error) error {
-		if apiError, ok := err.(errors.Error); ok {
-			return c.Status(apiError.Code).JSON(apiError.Message)
-		}
-		apiErr := errors.NewError(http.StatusInternalServerError, err.Error())
-		return c.Status(apiErr.Code).JSON(apiErr)
-	},
-}
 
 func main() {
 	listenAddr := flag.String("listenAddr", ":3000", "listen port of the api server")
@@ -53,7 +42,7 @@ func main() {
 		roomHandler    = api.NewRoomHandler(store)
 		bookingHandler = api.NewBookingHandler(store)
 
-		app   = fiber.New(config)
+		app   = fiber.New(fiber.Config{ErrorHandler: api.ErrorHandler})
 		auth  = app.Group("/")
 		v1    = app.Group("/v1", api.JWTAuthentication(userStore))
 		admin = v1.Group("/admin", api.AdminAuth)
@@ -64,8 +53,8 @@ func main() {
 	fmt.Println()
 
 	// user handlers
-	v1.Post("/user", userHandler.HandlePostUser)
 	v1.Get("/user", userHandler.HandleGetUsers)
+	v1.Post("/user", userHandler.HandlePostUser)
 	v1.Get("/user/:id", userHandler.HandleGetUser)
 	v1.Put("/user/:id", userHandler.HandlePutUser)
 	v1.Delete("/user/:id", userHandler.HandleDeleteUser)
@@ -77,6 +66,7 @@ func main() {
 
 	// room handlers
 	v1.Get("/room", roomHandler.HandleGetRooms)
+	v1.Get("/room/:id", roomHandler.HandleGetRoom)
 	v1.Post("/room/:id/book", roomHandler.HandleBookRoom)
 
 	// booking handlers

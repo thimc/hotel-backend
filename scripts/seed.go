@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"time"
 
 	"github.com/thimc/hotel-backend/api"
@@ -15,7 +16,7 @@ import (
 )
 
 func main() {
-	var ctx = context.Background()
+	ctx := context.Background()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(db.DBURI))
 	if err != nil {
 		log.Fatal(err)
@@ -24,15 +25,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	hotelStore := db.NewMongoHotelStore(client)
-	roomStore := db.NewMongoRoomStore(client, hotelStore)
 	userStore := db.NewMongoUserStore(client)
 	bookingStore := db.NewMongoBookingStore(client)
+	hotelStore := db.NewMongoHotelStore(client)
+	roomStore := db.NewMongoRoomStore(client, hotelStore)
 	db := &db.Store{
-		Hotel:   hotelStore,
-		Room:    roomStore,
 		User:    userStore,
 		Booking: bookingStore,
+		Hotel:   hotelStore,
+		Room:    roomStore,
 	}
 
 	user := fixtures.AddUser(db, "James", "Smith", false)
@@ -49,4 +50,10 @@ func main() {
 
 	booking := fixtures.AddBooking(db, user.ID, room.ID, time.Now(), time.Now().AddDate(0, 0, 5))
 	fmt.Println("Booking:", booking)
+
+	for i := 0; i < 100; i++ {
+		hotelName := fmt.Sprintf("Hotel_%d", i)
+		hotelLocation := fmt.Sprintf("Location_%d", i)
+		fixtures.AddHotel(db, hotelName, hotelLocation, rand.Intn(5)+1, nil)
+	}
 }

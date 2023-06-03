@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/thimc/hotel-backend/db"
 	"github.com/thimc/hotel-backend/types"
 
@@ -26,7 +24,7 @@ HandleGetBookings will return all bookings with no filter
 func (h *BookingHandler) HandleGetBookings(c *fiber.Ctx) error {
 	bookings, err := h.store.Booking.GetBookings(c.Context(), bson.M{})
 	if err != nil {
-		return err
+		return ErrorNotFound("Booking")
 	}
 	return c.JSON(bookings)
 }
@@ -35,14 +33,14 @@ func (h *BookingHandler) HandleGetBooking(c *fiber.Ctx) error {
 	id := c.Params("id")
 	booking, err := h.store.Booking.GetBookingByID(c.Context(), id)
 	if err != nil {
-		return err
+		return ErrorNotFound("Booking")
 	}
 	user, ok := c.Context().UserValue("user").(*types.User)
 	if !ok {
 		return err
 	}
 	if booking.UserID != user.ID {
-		return statusUnauthorized(c)
+		return ErrorUnauthorized()
 	}
 	return c.JSON(booking)
 }
@@ -59,30 +57,23 @@ func (h *BookingHandler) HandleCancelBooking(c *fiber.Ctx) error {
 	id := c.Params("id")
 	booking, err := h.store.Booking.GetBookingByID(c.Context(), id)
 	if err != nil {
-		return err
+		return ErrorNotFound("Booking")
 	}
 	user, ok := c.Context().UserValue("user").(*types.User)
 	if !ok {
-		return statusUnauthorized(c)
+		return ErrorUnauthorized()
 	}
 
 	if booking.UserID != user.ID && !user.IsAdmin {
-		return statusUnauthorized(c)
+		return ErrorUnauthorized()
 	}
 
 	update := bson.M{"canceled": true}
 	if err := h.store.Booking.UpdateBooking(c.Context(), id, update); err != nil {
 		return err
 	}
-	return c.JSON(GenericResp{
+	return c.JSON(Response{
 		Success: true,
-		Msg:     "ok",
-	})
-}
-
-func statusUnauthorized(c *fiber.Ctx) error {
-	return c.Status(http.StatusUnauthorized).JSON(GenericResp{
-		Success: false,
-		Msg:     "unauthorized",
+		Message: "ok",
 	})
 }
