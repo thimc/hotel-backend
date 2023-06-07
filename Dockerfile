@@ -13,11 +13,11 @@ RUN go mod download
 COPY . .
 
 # Build
-RUN go build -o main .
+RUN go build -o hotel-api .
 
 # Expose the port
 EXPOSE 3000
 
 # Set the entry point
-CMD ["./main"]
+CMD ["./hotel-api"]
 
